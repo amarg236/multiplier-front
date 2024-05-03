@@ -6,12 +6,15 @@ function App() {
   const [submitNumber, setSubmitNumber] = useState(0);
   const [multiplyBy2, setMultiplyBy2] = useState(0);
   const [multiplyBy2Square, setMultiplyBy2Square] = useState(0);
+  const [responseMessage, setResponseMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleChange = (event) => {
     setSubmitNumber(event.target.value);
   }
 
   const handleSubmit = (event) => {
+
     event.preventDefault();
     console.log(event.target.elements.task.value);
     console.log("submit number :" + submitNumber);
@@ -28,12 +31,17 @@ function App() {
 
 
         if (!response.ok) {
+          setShowAlert(true);
+          const data = await response.json();
+
+          setResponseMessage(data.baseResponse.message);
+
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
         if (data.baseResponse != null && data.baseResponse.statusCode === 200) {
-          console.log("data found");
-          console.log(data);
+          setShowAlert(false);
+          setResponseMessage(data.baseResponse.message);
           setMultiplyBy2(data.multiplyBy2);
           setMultiplyBy2Square(data.multiplyBy2Square);
         } else {
@@ -52,6 +60,7 @@ function App() {
   }
 
   const handleReset = () => {
+    setShowAlert(false);
     setSubmitNumber(0);
     document.getElementById('task').value = '';
   }
@@ -86,6 +95,23 @@ function App() {
             <p > <span className='text-success fs-4 p-4 mt-3'>{submitNumber}</span></p>
           </div>
         </div>
+        <div className='row text-center'>
+
+        </div>
+
+
+        <div className='col-sm-12' id="responseBox">
+          {showAlert ? 
+            <div className="alert alert-warning  mt-5 text-center " role="alert">
+              <strong>{responseMessage}</strong> 
+             
+            </div>
+            :null
+          }
+
+
+        </div>
+
 
 
       </div>
